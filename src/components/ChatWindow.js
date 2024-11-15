@@ -6,29 +6,61 @@ export class ChatWindow {
     this.bindEventListeners();
   }
 
-  loadPosition() {
-    // 從 storage 讀取上次位置
-    return chrome.storage.local.get(['windowPosition'])
-      .then(result => result.windowPosition || { x: 20, y: 20 });
+  async loadPosition() {
+    const result = await chrome.storage.local.get(['windowPosition']);
+    return result.windowPosition || { x: 20, y: 20 };
   }
 
   initializeDraggable() {
     const header = document.querySelector('.chat-header');
-    header.addEventListener('mousedown', this.startDragging.bind(this));
+    if (header) {
+      let isDragging = false;
+      let currentX;
+      let currentY;
+      let initialX;
+      let initialY;
+
+      header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        initialX = e.clientX - currentX;
+        initialY = e.clientY - currentY;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          e.preventDefault();
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+          const chatWindow = document.getElementById('chat-window');
+          chatWindow.style.transform = 
+            `translate(${currentX}px, ${currentY}px)`;
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    }
   }
 
   initializeResizable() {
     // 實作視窗大小調整功能
+    // 可以之後再實作
   }
 
   bindEventListeners() {
-    document.getElementById('send-btn').addEventListener('click', this.sendMessage.bind(this));
-    document.getElementById('message-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        this.sendMessage();
-      }
-    });
+    const sendBtn = document.getElementById('send-btn');
+    const messageInput = document.getElementById('message-input');
+
+    if (sendBtn && messageInput) {
+      sendBtn.addEventListener('click', () => this.sendMessage());
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          this.sendMessage();
+        }
+      });
+    }
   }
 
   async sendMessage() {
@@ -41,10 +73,11 @@ export class ChatWindow {
     this.addMessage(message, 'user');
     input.value = '';
     
-    // 發送到 API 並處理回應
     try {
-      const response = await this.sendToAPI(message);
-      this.addMessage(response, 'ai');
+      // 模擬 AI 回覆
+      setTimeout(() => {
+        this.addMessage('這是一個測試回覆', 'ai');
+      }, 1000);
     } catch (error) {
       this.showError('發送訊息失敗，請稍後再試');
     }
@@ -58,4 +91,18 @@ export class ChatWindow {
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
+
+  showError(message) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'message error';
+    errorDiv.textContent = message;
+    messagesContainer.appendChild(errorDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+}
+
+// 如果在內容腳本中載入，自動初始化
+if (typeof window !== 'undefined') {
+  window.ChatWindow = ChatWindow;
 } 

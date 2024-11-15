@@ -5,23 +5,17 @@
   "description": "AI 即時對話懸浮聊天視窗",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
   "action": {
     "default_icon": {
       "16": "assets/icons/icon-16.png",
       "48": "assets/icons/icon-48.png",
       "128": "assets/icons/icon-128.png"
-    }
+    },
+    "default_popup": "src/popup/popup.html"
   },
-  "background": {
-    "service_worker": "src/background/background.js"
-  },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["src/content/content.js"],
-    "css": ["src/popup/popup.css"]
-  }],
   "icons": {
     "16": "assets/icons/icon-16.png",
     "48": "assets/icons/icon-48.png",
