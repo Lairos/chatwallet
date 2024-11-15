@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="chat-window" class="chat-window">
+    <div class="chat-header">
+      <h1>ChatWallet</h1>
+      <div class="window-controls">
+        <button class="minimize-btn">−</button>
+        <button class="close-btn">×</button>
+      </div>
+    </div>
+    
+    <div class="chat-messages" id="chat-messages">
+      <!-- 訊息將動態插入此處 -->
+    </div>
+    
+    <div class="chat-input">
+      <textarea 
+        id="message-input" 
+        placeholder="輸入訊息..."
+        rows="2"
+      ></textarea>
+      <button id="send-btn">發送</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 
